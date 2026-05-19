@@ -453,6 +453,30 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   .song-label.is-named { color: var(--green); }
   .song-label.is-artist { color: var(--orange); }
   .song-label.is-reconstructed { color: rgba(21,20,15,0.5); }
+
+  .song-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 6px;
+    margin-top: 10px;
+  }
+  .song-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'Archivo', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    padding: 4px 9px 4px 8px;
+    border-radius: 2px;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+  .song-tag .tag-glyph { font-size: 11px; line-height: 1; }
+  .song-tag.tag-origin { color: var(--green-deep); background: rgba(31,79,46,0.10); }
+  .song-tag.tag-genre  { color: #8a4a17;          background: rgba(224,84,31,0.10); }
+  .song-tag.tag-dance  { color: #5d2a78;          background: rgba(138,42,120,0.10); }
   .song-title {
     font-family: 'Archivo Black', sans-serif;
     font-size: 20px;
@@ -603,7 +627,7 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
       <div class="award-tag">Winner of the Palestine Book Award</div>
       <div class="hero-meta">
         A literary companion<br />
-        <strong>22 songs · 9 chapters</strong>
+        <strong>23 songs · 9 scenes</strong>
       </div>
     </div>
 
@@ -629,7 +653,7 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 
     <div class="hero-bottom">
       <p class="hero-intro">
-        <span class="first">From Kuwait to Palestine, from a child's living room to a military courtroom</span> — these are the songs that play, are sung, hummed, or remembered across the life of Yaqoot &mdash; <em>Nahr</em>. Twenty&#8209;two recordings, arranged in the order the novel reveals them.
+        <span class="first">From Kuwait to Palestine, from a child's living room to a military courtroom</span> — these are the songs that play, are sung, hummed, or remembered across the life of Yaqoot &mdash; <em>Nahr</em>. Twenty&#8209;three recordings, arranged in the order the novel reveals them.
       </p>
       <div class="hero-actions">
         <a class="btn-primary" href="https://www.youtube.com/playlist?list=PLjmdUfD5hElV2SVSFfU3qIKboA-2FrPgL" target="_blank" rel="noopener">
@@ -643,7 +667,7 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 
 <!-- ────────────────────────── CONTENTS BAR ────────────────────────── -->
 <div class="contents-bar" id="contents-bar">
-  <span class="label">Chapters</span>
+  <span class="label">Scenes</span>
   <nav id="contents-nav"></nav>
 </div>
 
@@ -692,9 +716,9 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
       "title": "Childhood in Kuwait",
       "where": "Nahr's family home, late 1970s — the small rituals of a girl before everything.",
       "songs": [
-        {"n":1,"label":"named","title":"Fattoum Fattouma","artist":"Ghawwar el-Tousheh","vid":"7R2jPA6fkNo","i":1,"desc":"Nahr's father teaches her this song during their private weekend ritual at home in Kuwait, singing together while he wipes the coffee table with Windex. Forbidden to sing it in front of her mother."},
-        {"n":2,"label":"named","title":"Al-Nasheed Al-Watani","artist":"Kuwait National Anthem","vid":"i-7mnv4VhbM","i":2,"desc":"Nahr and all students line up every school day to sing it, pledging loyalty to the successive Kuwaiti emirs with genuine passion."},
-        {"n":3,"label":"reconstructed","title":"Sikat Safar","artist":"Nabil Shuail","vid":"WaQ3sCUc7kA","i":3,"desc":"Representing the Khaleeji pop tradition Nahr grew up immersed in. Shuail, the 'Gulf Nightingale' born in Kuwait in 1962, rose to fame in the early 1980s — the exact era Nahr is dancing Khaleeji 'better than their best' and selected for the televised Independence Day troupe."}
+        {"n":1,"tags":[{"glyph":"🌍","text":"Syrian"},{"glyph":"🎵","text":"comedy folk"},{"glyph":"💃","text":"shaabi"}],"label":"named","title":"Fattoum Fattouma","artist":"Ghawwar el-Tousheh","vid":"7R2jPA6fkNo","i":1,"desc":"Nahr's father teaches her this song during their private weekend ritual at home in Kuwait, singing together while he wipes the coffee table with Windex. Forbidden to sing it in front of her mother."},
+        {"n":2,"tags":[{"glyph":"🌍","text":"Kuwaiti"},{"glyph":"🎵","text":"national anthem"}],"label":"named","title":"Al-Nasheed Al-Watani","artist":"Kuwait National Anthem","vid":"i-7mnv4VhbM","i":2,"desc":"Nahr and all students line up every school day to sing it, pledging loyalty to the successive Kuwaiti emirs with genuine passion."},
+        {"n":3,"tags":[{"glyph":"🌍","text":"Kuwaiti"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"Khaleeji"}],"label":"reconstructed","title":"Sikat Safar","artist":"Nabil Shuail","vid":"WaQ3sCUc7kA","i":3,"desc":"Representing the Khaleeji pop tradition Nahr grew up immersed in. Shuail, the 'Gulf Nightingale' born in Kuwait in 1962, rose to fame in the early 1980s — the exact era Nahr is dancing Khaleeji 'better than their best' and selected for the televised Independence Day troupe."}
       ]
     },
     {
@@ -702,7 +726,7 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
       "title": "The Televised Independence Day Performance",
       "where": "Kuwait, late 1970s–early 1980s. A schoolgirl dances before the royals.",
       "songs": [
-        {"n":4,"label":"reconstructed","title":"Wein Rayeh","artist":"Abdallah Al Rowaished","vid":"eArL8-iBn9g","i":4,"desc":"Representing the traditional Khaleeji dance performed before the royals. Al Rowaished, born in Kuwait in 1961, was the defining Kuwaiti voice of this era, his career launching in 1983 — precisely contemporaneous with the Independence Day celebrations Nahr danced in as a schoolgirl."}
+        {"n":4,"tags":[{"glyph":"🌍","text":"Kuwaiti"},{"glyph":"🎵","text":"traditional"},{"glyph":"💃","text":"Khaleeji"}],"label":"reconstructed","title":"Wein Rayeh","artist":"Abdallah Al Rowaished","vid":"eArL8-iBn9g","i":4,"desc":"Representing the traditional Khaleeji dance performed before the royals. Al Rowaished, born in Kuwait in 1961, was the defining Kuwaiti voice of this era, his career launching in 1983 — precisely contemporaneous with the Independence Day celebrations Nahr danced in as a schoolgirl."}
       ]
     },
     {
@@ -710,7 +734,7 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
       "title": "Nahr's Brief Marriage to Mhammad",
       "where": "An oud after the beach. A dance neither of them wants to stop.",
       "songs": [
-        {"n":5,"label":"reconstructed","title":"Lamma Bada Yatathanna","artist":"Lena Chamamyan","vid":"EE8cHyjCNLE","i":5,"desc":"Mhammad takes out his oud after the beach, tunes it slowly, and plays while Nahr dances naked, a scarf around her hips, neither of them wanting to stop. Chamamyan's version of this centuries-old Andalusian muwashshah — haunting, intimate, built around the oud — describes a dancer of total abandon and the helpless enchantment of those watching her. Joy on the surface, unspoken longing underneath: the Tamara secret is already there."}
+        {"n":5,"tags":[{"glyph":"🎵","text":"muwashshah"}],"label":"reconstructed","title":"Lamma Bada Yatathanna","artist":"Lena Chamamyan","vid":"EE8cHyjCNLE","i":5,"desc":"Mhammad takes out his oud after the beach, tunes it slowly, and plays while Nahr dances naked, a scarf around her hips, neither of them wanting to stop. Chamamyan's version of this centuries-old Andalusian muwashshah — haunting, intimate, built around the oud — describes a dancer of total abandon and the helpless enchantment of those watching her. Joy on the surface, unspoken longing underneath: the Tamara secret is already there."}
       ]
     },
     {
@@ -718,11 +742,11 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
       "title": "A Classmate's Wedding in Kuwait",
       "where": "Early 1990s. The women's segregated celebration, a DJ's set arc from Khaleeji to dabke.",
       "songs": [
-        {"n":6,"label":"reconstructed","title":"Motheer","artist":"Ahlam","vid":"1Rqa3xWoBHQ","i":6,"desc":"Representing the pop Khaleeji portion of the DJ set. Ahlam was the breakout Khaleeji pop female voice of the early 1990s, her sound exactly matching the 'pop Khaleeji' the novel describes at this women's segregated Gulf wedding."},
-        {"n":7,"label":"reconstructed","title":"Matkhafesh","artist":"Amr Diab","vid":"F4npeninpf4","i":7,"desc":"Representing the Egyptian pop portion of the wedding DJ set. One of Amr Diab's biggest early hits — already the dominant Egyptian voice at Arab weddings regionwide before his late-90s peak."},
-        {"n":8,"label":"artist","title":"Saalouny El Nas","artist":"Fairuz","vid":"Ns5P6lRhmEY","i":8,"desc":"Representing the Lebanese pop portion of the wedding. Fairuz is the defining Lebanese voice referenced throughout the novel, and this warm, deeply familiar song suits the festive wedding atmosphere well."},
-        {"n":9,"label":"artist","title":"Longa Farahfeza","artist":"National Arab Orchestra Takht Ensemble","vid":"ET2bgLiqjaY","i":9,"desc":"Representing the classical takht orchestra portion with instrumental taqseem. A longa is the quintessential takht showpiece — designed precisely for this kind of classical interlude at Arab celebrations, performed on oud, qanun, ney, violin, and riq."},
-        {"n":10,"label":"reconstructed","title":"Al Jafra","artist":"Traditional Palestinian/Levantine dabke","vid":"9B3N0qXv0vk","i":10,"desc":"The jafra is explicitly named in the novel. Nahr leads the Levantine women in a high-stepping dabke and drags the bride into the center of the dance floor."}
+        {"n":6,"tags":[{"glyph":"🌍","text":"Emirati"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"Khaleeji"}],"label":"reconstructed","title":"Motheer","artist":"Ahlam","vid":"1Rqa3xWoBHQ","i":6,"desc":"Representing the pop Khaleeji portion of the DJ set. Ahlam was the breakout Khaleeji pop female voice of the early 1990s, her sound exactly matching the 'pop Khaleeji' the novel describes at this women's segregated Gulf wedding."},
+        {"n":7,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"shaabi"}],"label":"reconstructed","title":"Matkhafesh","artist":"Amr Diab","vid":"F4npeninpf4","i":7,"desc":"Representing the Egyptian pop portion of the wedding DJ set. One of Amr Diab's biggest early hits — already the dominant Egyptian voice at Arab weddings regionwide before his late-90s peak."},
+        {"n":8,"tags":[{"glyph":"🌍","text":"Lebanese"},{"glyph":"🎵","text":"tarab"}],"label":"artist","title":"Saalouny El Nas","artist":"Fairuz","vid":"Ns5P6lRhmEY","i":8,"desc":"Representing the Lebanese pop portion of the wedding. Fairuz is the defining Lebanese voice referenced throughout the novel, and this warm, deeply familiar song suits the festive wedding atmosphere well."},
+        {"n":9,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"takht"},{"glyph":"🎵","text":"taqseem"}],"label":"reconstructed","title":"Longa Farahfeza","artist":"National Arab Orchestra Takht Ensemble","vid":"ET2bgLiqjaY","i":9,"desc":"Representing the classical takht orchestra portion with instrumental taqseem. A longa is the quintessential takht showpiece — designed precisely for this kind of classical interlude at Arab celebrations, performed on oud, qanun, ney, violin, and riq."},
+        {"n":10,"tags":[{"glyph":"🌍","text":"Palestinian"},{"glyph":"🎵","text":"folk"},{"glyph":"💃","text":"dabke"}],"label":"named","title":"Al Jafra","artist":"Traditional Palestinian/Levantine dabke","vid":"9B3N0qXv0vk","i":10,"desc":"The jafra is explicitly named in the novel. Nahr leads the Levantine women in a high-stepping dabke and drags the bride into the center of the dance floor."}
       ]
     },
     {
@@ -730,7 +754,7 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
       "title": "Illicit Parties in Kuwait — the Diwaniya",
       "where": "Early 1990s. Nahr dances for banknotes as 'Almas.'",
       "songs": [
-        {"n":11,"label":"reconstructed","title":"Ana Batba'a Galbi","artist":"Abdallah Al Rowaished","vid":"eMqIHRm0R3c","i":11,"desc":"Representing the unnamed loud party music at the wealthy Kuwaiti men's diwaniya where Nahr dances for banknotes as 'Almas.' Al Rowaished was the dominant sound at elite Kuwaiti private gatherings in this period."}
+        {"n":11,"tags":[{"glyph":"🌍","text":"Kuwaiti"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"Khaleeji"}],"label":"reconstructed","title":"Ana Batba'a Galbi","artist":"Abdallah Al Rowaished","vid":"eMqIHRm0R3c","i":11,"desc":"Representing the unnamed loud party music at the wealthy Kuwaiti men's diwaniya where Nahr dances for banknotes as 'Almas.' Al Rowaished was the dominant sound at elite Kuwaiti private gatherings in this period."}
       ]
     },
     {
@@ -738,11 +762,11 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
       "title": "Salon Renovation in Palestine",
       "where": "Mid-2000s. With Jumana, paint thrown across the walls, the radio on.",
       "songs": [
-        {"n":12,"label":"reconstructed","title":"Ah We Nos","artist":"Nancy Ajram","vid":"7ZvVP9U7wE4","i":12,"desc":"Playing on the radio as Jumana's brothers arrive to find Nahr and Jumana throwing paint at each other."},
-        {"n":13,"label":"named","title":"Bous El Wawa","artist":"Hayfa Wahbe","vid":"fDNfXjQiD9E","i":13,"desc":"Her biggest and most iconic hit, emblematic of her Lebanese pop persona in the mid-2000s."},
-        {"n":14,"label":"artist","title":"Tamally Ma'ak","artist":"Amr Diab","vid":"dwTJ2AELgoc","i":14,"desc":"His most enduring song, released 2000 — a perfect fit for the mid-2000s Palestinian salon renovation scene."},
-        {"n":15,"label":"artist","title":"Mabtefrahsh","artist":"Sherine","vid":"iz37gvhvhjg","i":15,"desc":"One of her most recognizable songs, widely played across the Arab world throughout the 2000s."},
-        {"n":16,"label":"artist","title":"Tab Leih","artist":"Ragheb Alama","vid":"9Vb7gdxuo0s","i":16,"desc":"One of his signature Lebanese pop hits, extremely popular on radio throughout this period."}
+        {"n":12,"tags":[{"glyph":"🌍","text":"Lebanese"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"dance"}],"label":"named","title":"Ah We Nos","artist":"Nancy Ajram","vid":"7ZvVP9U7wE4","i":12,"desc":"Playing on the radio as Jumana's brothers arrive to find Nahr and Jumana throwing paint at each other."},
+        {"n":13,"tags":[{"glyph":"🌍","text":"Lebanese"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"dance"}],"label":"named","title":"Bous El Wawa","artist":"Hayfa Wahbe","vid":"fDNfXjQiD9E","i":13,"desc":"Her biggest and most iconic hit, emblematic of her Lebanese pop persona in the mid-2000s."},
+        {"n":14,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"pop"}],"label":"artist","title":"Tamally Ma'ak","artist":"Amr Diab","vid":"dwTJ2AELgoc","i":14,"desc":"His most enduring song, released 2000 — a perfect fit for the mid-2000s Palestinian salon renovation scene."},
+        {"n":15,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"pop"}],"label":"artist","title":"Mabtefrahsh","artist":"Sherine","vid":"iz37gvhvhjg","i":15,"desc":"One of her most recognizable songs, widely played across the Arab world throughout the 2000s."},
+        {"n":16,"tags":[{"glyph":"🌍","text":"Lebanese"},{"glyph":"🎵","text":"pop"}],"label":"artist","title":"Tab Leih","artist":"Ragheb Alama","vid":"9Vb7gdxuo0s","i":16,"desc":"One of his signature Lebanese pop hits, extremely popular on radio throughout this period."}
       ]
     },
     {
@@ -750,8 +774,8 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
       "title": "A Party in Palestine",
       "where": "Before the smuggling operation. The room slows, Nahr opens her eyes, Bilal is watching.",
       "songs": [
-        {"n":17,"label":"artist","title":"Nour El Ein","artist":"Amr Diab","vid":"KLJA-srM_yM","i":17,"desc":"Representing the unnamed Amr Diab song to which thirty people are dancing when Nahr enters the party. His most globally recognized hit (1996), the one most likely playing at any pan-Arab gathering in Palestine in the early 2000s."},
-        {"n":18,"label":"artist","title":"Ya Tayr","artist":"Fairuz","vid":"dlbA6_Qni9I","i":18,"desc":"The DJ slows the evening with this song. The opening flute notes transport Nahr through a spiral of memories — Kuwait's shores, her family, Jandal, Palestine. She opens her eyes to find Bilal watching her."}
+        {"n":17,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"pop"}],"label":"artist","title":"Nour El Ein","artist":"Amr Diab","vid":"KLJA-srM_yM","i":17,"desc":"Representing the unnamed Amr Diab song to which thirty people are dancing when Nahr enters the party. His most globally recognized hit (1996), the one most likely playing at any pan-Arab gathering in Palestine in the early 2000s."},
+        {"n":18,"tags":[{"glyph":"🌍","text":"Lebanese"},{"glyph":"🎵","text":"tarab"}],"label":"named","title":"Ya Tayr","artist":"Fairuz","vid":"dlbA6_Qni9I","i":18,"desc":"The DJ slows the evening with this song. The opening flute notes transport Nahr through a spiral of memories — Kuwait's shores, her family, Jandal, Palestine. She opens her eyes to find Bilal watching her."}
       ]
     },
     {
@@ -759,7 +783,7 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
       "title": "Under Curfew, at Home with Bilal",
       "where": "Tanks surrounding the town. Candles. A tarab tape in a blacked-out room.",
       "songs": [
-        {"n":19,"label":"named","title":"El Hawa Hawaya","artist":"Abdel Halim Hafez","vid":"gJWMMn747J8","i":19,"desc":"On a tarab tape Bilal plays by candlelight in a blacked-out room. As this song plays, he kneels beside Nahr and they make love while tanks surround the town."}
+        {"n":19,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"tarab"}],"label":"named","title":"El Hawa Hawaya","artist":"Abdel Halim Hafez","vid":"gJWMMn747J8","i":19,"desc":"On a tarab tape Bilal plays by candlelight in a blacked-out room. As this song plays, he kneels beside Nahr and they make love while tanks surround the town."}
       ]
     },
     {
@@ -767,9 +791,10 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
       "title": "Military Court — Nahr's Act of Defiance",
       "where": "Before an Israeli military judge, Nahr opens her mouth to sing.",
       "songs": [
-        {"n":20,"label":"named","title":"Yomma Mweil El-Hawa","artist":"May Nasr","vid":"wW9EPzVpsLo","i":20,"desc":"Nahr opens her courtroom singing protest with this traditional song 'to set the mood.' May Nasr's version is a Palestinian singer performing a Palestinian folk song — all the more fitting for Nahr's act of defiance before an Israeli military judge."},
-        {"n":21,"label":"named","title":"El Hawa Hawaya","artist":"Abdel Halim Hafez","vid":"rzRhJp1eOeQ","i":21,"desc":"The first Abdel Halim song she sings in court, immediately after the opening."},
-        {"n":22,"label":"named","title":"Qariatol Fingan","artist":"Abdel Halim Hafez","vid":"R0eLAet_dJA","i":22,"desc":"Her personal favorite — the judge baffled and irate, ordering guards to silence her."}
+        {"n":20,"tags":[{"glyph":"🌍","text":"Palestinian"},{"glyph":"🎵","text":"folk"},{"glyph":"💃","text":"traditional"}],"label":"named","title":"Yomma Mweil El-Hawa","artist":"May Nasr","vid":"wW9EPzVpsLo","i":20,"desc":"Nahr opens her courtroom singing protest with this traditional song 'to set the mood.' May Nasr's version is a Palestinian singer performing a Palestinian folk song — all the more fitting for Nahr's act of defiance before an Israeli military judge."},
+        {"n":21,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"tarab"}],"label":"named","title":"El Hawa Hawaya","artist":"Abdel Halim Hafez","vid":"rzRhJp1eOeQ","i":21,"desc":"The first Abdel Halim song she sings in court, immediately after the opening."},
+        {"n":22,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"tarab"}],"label":"named","title":"Qariatol Fingan","artist":"Abdel Halim Hafez","vid":"R0eLAet_dJA","i":22,"desc":"Her personal favorite — the judge baffled and irate, ordering guards to silence her."},
+        {"n":23,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"tarab"}],"label":"named","title":"Mawood","artist":"Abdel Halim Hafez","vid":"XhemmM0k-3g","i":23,"desc":"The final song she manages before the judge expels the press and has her forcibly silenced."}
       ]
     }
   ]
@@ -826,6 +851,13 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
     const num = String(song.n).padStart(2, '0');
     const url = `https://www.youtube.com/watch?v=${song.vid}&list=${PLAYLIST_ID}&index=${song.i}`;
     const lbl = LABEL_META[song.label] || LABEL_META.reconstructed;
+    const TAG_GLYPHS = { '\u{1F30D}': 'tag-origin', '\u{1F483}': 'tag-dance' };
+    const tagsHTML = (song.tags && song.tags.length)
+      ? `<div class="song-tags">${song.tags.map(tg => {
+          const cls = TAG_GLYPHS[tg.glyph] || 'tag-genre';
+          return `<span class="song-tag ${cls}"><span class="tag-glyph" aria-hidden="true">${tg.glyph}</span>${escapeHTML(tg.text)}</span>`;
+        }).join('')}</div>`
+      : '';
     return `
       <article class="song" id="song-${song.n}">
         <a class="song-thumb" href="${url}" target="_blank" rel="noopener" aria-label="Watch &quot;${escapeHTML(song.title)}&quot; on YouTube">
@@ -840,6 +872,7 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
             <span class="song-label ${lbl.cls}"><span class="glyph" aria-hidden="true">${lbl.glyph}</span>${lbl.text}</span>
             <h3 class="song-title">${escapeHTML(song.title)}</h3>
             <p class="song-artist">${escapeHTML(song.artist)}</p>
+            ${tagsHTML}
           </div>
           <p class="song-desc">${escapeHTML(song.desc)}</p>
           <div class="song-foot">
@@ -861,7 +894,7 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
           <header class="chapter-head">
             <div class="chapter-num">
               <span class="marker" aria-hidden="true">${cubeSvg}</span>
-              <span>Chapter</span>
+              <span>Scene</span>
               <span class="roman">${ROMANS[idx] || idx + 1}</span>
             </div>
             <h2 class="chapter-title">${escapeHTML(ch.title)}</h2>
