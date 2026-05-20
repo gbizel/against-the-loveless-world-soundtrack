@@ -12,7 +12,9 @@
 window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "palette": "book",
   "patternIntensity": 55,
-  "showPattern": true
+  "showPattern": true,
+  "songRedactColor": "#3a8a55",
+  "songRedactSaturation": 45
 }/*EDITMODE-END*/;
 </script>
 
@@ -298,6 +300,212 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
     color: var(--yellow);
     margin-right: 6px;
   }
+  .contents-bar a.is-redacted {
+    pointer-events: auto;
+    opacity: 1;
+  }
+  .contents-bar a.is-redacted .scene-name { display: inline; }
+  .contents-bar a.is-redacted::after { content: none; }
+
+  /* ─────────────────────────────── SPOILER SHIELD ───────────────────────────── */
+  .shield {
+    background: var(--cream-2);
+    color: var(--green-deep);
+    padding: 16px 40px 18px;
+    position: sticky;
+    top: 60px;
+    z-index: 29;
+    border-bottom: 1px solid rgba(20,56,32,0.18);
+  }
+  .shield-inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) minmax(0, 2.4fr) auto;
+    align-items: center;
+    gap: 28px;
+  }
+  .shield-text { min-width: 0; }
+  .shield-label {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .shield-label .bookmark {
+    display: inline-block;
+    width: 11px;
+    height: 14px;
+    background: var(--orange);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 75%, 0 100%);
+  }
+  .shield-sub {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 13px;
+    opacity: 0.72;
+    line-height: 1.3;
+    color: var(--green-deep);
+  }
+
+  .shield-slider {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+  .shield-slider-track {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .shield-slider-track .end {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    opacity: 0.6;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    color: var(--green-deep);
+  }
+  .shield-slider input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1;
+    height: 5px;
+    background: linear-gradient(to right, var(--green) 0%, var(--green) var(--fill, 100%), rgba(20,56,32,0.16) var(--fill, 100%), rgba(20,56,32,0.16) 100%);
+    border-radius: 0;
+    outline: none;
+    cursor: pointer;
+    margin: 0;
+  }
+  .shield-slider input[type="range"]:disabled { opacity: 0.4; cursor: not-allowed; }
+  .shield-slider input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 22px;
+    background: var(--paper);
+    border: 2px solid var(--green-deep);
+    box-shadow: 0 1px 3px rgba(14,44,25,0.18);
+    border-radius: 1px;
+    cursor: grab;
+    transition: transform 0.15s;
+  }
+  .shield-slider input[type="range"]::-webkit-slider-thumb:active { cursor: grabbing; transform: scaleY(1.05); }
+  .shield-slider input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 22px;
+    background: var(--paper);
+    border: 2px solid var(--green-deep);
+    border-radius: 1px;
+    cursor: grab;
+  }
+  .shield-readout {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-family: 'Archivo', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--green-deep);
+  }
+  .shield-readout .live {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--green-deep);
+  }
+  .shield-readout .note { opacity: 0.55; font-style: italic; font-family: 'Fraunces', serif; }
+
+  .shield-toggle {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1.5px solid var(--green-deep);
+    flex: 0 0 auto;
+    background: transparent;
+  }
+  .shield-toggle button {
+    background: transparent;
+    color: var(--green-deep);
+    border: none;
+    padding: 9px 14px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    line-height: 1;
+  }
+  .shield-toggle button.is-active {
+    background: var(--green-deep);
+    color: var(--cream);
+  }
+  .shield-toggle button + button { border-left: 1.5px solid var(--green-deep); }
+
+  @media (max-width: 900px) {
+    .shield { padding: 14px 22px 16px; top: 56px; }
+    .shield-inner { grid-template-columns: 1fr; gap: 14px; }
+    .shield-toggle { justify-self: start; }
+  }
+
+  /* ─── Redaction (per-span) ─── */
+  .redact {
+    transition: color 0.15s, background-color 0.15s;
+  }
+  .redact .rd-tag {
+    display: none;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 0.7em;
+    letter-spacing: 0.16em;
+    color: var(--cream);
+    opacity: 0.75;
+    margin: 0 0 0 0.55em;
+    padding: 0 1px;
+    vertical-align: 0.05em;
+    white-space: nowrap;
+  }
+  .redact.is-redacted {
+    color: transparent !important;
+    background: var(--green);
+    -webkit-box-decoration-break: clone;
+            box-decoration-break: clone;
+    padding: 0 5px;
+    border-radius: 1px;
+    cursor: help;
+    user-select: none;
+  }
+  .redact.is-redacted::selection { background: var(--green); color: transparent; }
+  .redact.is-redacted .rd-tag { display: inline; color: var(--cream); }
+  .redact.is-redacted * { visibility: hidden; }
+  .redact.is-redacted .rd-tag, .redact.is-redacted .rd-tag * { visibility: visible; }
+
+  /* Larger / display contexts (scene titles): give the bar a touch more breathing room and a heavier feel */
+  .chapter-title .redact.is-redacted { padding: 0 10px 4px; background: var(--green-deep); }
+  /* Song descriptions get a lighter, more readable green — tweakable */
+  .song-desc .redact.is-redacted {
+    background: var(--song-redact-bg, var(--green));
+    filter: saturate(var(--song-redact-sat, 100%));
+  }
+  .song-desc .redact.is-redacted::selection { background: var(--song-redact-bg, var(--green)); }
+  .chapter-title .redact.is-redacted .rd-tag {
+    font-size: 0.35em;
+    letter-spacing: 0.2em;
+    vertical-align: 0.45em;
+  }
+  .chapter-where .redact.is-redacted .rd-tag { font-size: 0.75em; }
+
+  /* On the dark green Contents bar, swap bar color to keep contrast */
+  .contents-bar .redact.is-redacted {
+    background: var(--green-deep);
+    padding: 0 6px;
+  }
+  .contents-bar .redact.is-redacted .rd-tag { color: var(--yellow); opacity: 0.85; }
 
   /* ─────────────────────────────── CHAPTERS ─────────────────────────────── */
   main { padding: 0; }
@@ -671,6 +879,31 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   <nav id="contents-nav"></nav>
 </div>
 
+<!-- ────────────────────────── SPOILER SHIELD ────────────────────────── -->
+<div class="shield" id="shield">
+  <div class="shield-inner">
+    <div class="shield-text">
+      <div class="shield-label"><span class="bookmark" aria-hidden="true"></span>Where are you in the book?</div>
+      <div class="shield-sub">Songs and scenes beyond your page will be hidden.</div>
+    </div>
+    <div class="shield-slider">
+      <div class="shield-slider-track">
+        <span class="end">p. 1</span>
+        <input id="shield-range" type="range" min="1" max="360" value="1" aria-label="Current page" />
+        <span class="end">p. 360</span>
+      </div>
+      <div class="shield-readout">
+        <span class="live" id="shield-readout">Page 1 — 1 scene visible</span>
+        <span class="note">Page numbers follow the printed edition.</span>
+      </div>
+    </div>
+    <div class="shield-toggle" role="group" aria-label="Spoiler mode">
+      <button type="button" data-mode="show">Show all</button>
+      <button type="button" data-mode="hide" class="is-active">Hide spoilers</button>
+    </div>
+  </div>
+</div>
+
 <!-- ────────────────────────── CHAPTERS ────────────────────────── -->
 <main id="chapters"></main>
 
@@ -709,96 +942,7 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 </footer>
 
 <script type="application/json" id="soundtrack-data">
-{
-  "chapters": [
-    {
-      "id": "ch1",
-      "title": "Childhood in Kuwait",
-      "where": "Nahr's family home, late 1970s — the small rituals of a girl before everything.",
-      "songs": [
-        {"n":1,"tags":[{"glyph":"🌍","text":"Syrian"},{"glyph":"🎵","text":"comedy folk"},{"glyph":"💃","text":"shaabi"}],"label":"named","title":"Fattoum Fattouma","artist":"Ghawwar el-Tousheh","vid":"7R2jPA6fkNo","i":1,"desc":"Nahr's father teaches her this song during their private weekend ritual at home in Kuwait, singing together while he wipes the coffee table with Windex. Forbidden to sing it in front of her mother."},
-        {"n":2,"tags":[{"glyph":"🌍","text":"Kuwaiti"},{"glyph":"🎵","text":"national anthem"}],"label":"named","title":"Al-Nasheed Al-Watani","artist":"Kuwait National Anthem","vid":"i-7mnv4VhbM","i":2,"desc":"Nahr and all students line up every school day to sing it, pledging loyalty to the successive Kuwaiti emirs with genuine passion."},
-        {"n":3,"tags":[{"glyph":"🌍","text":"Kuwaiti"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"Khaleeji"}],"label":"reconstructed","title":"Sikat Safar","artist":"Nabil Shuail","vid":"WaQ3sCUc7kA","i":3,"desc":"Representing the Khaleeji pop tradition Nahr grew up immersed in. Shuail, the 'Gulf Nightingale' born in Kuwait in 1962, rose to fame in the early 1980s — the exact era Nahr is dancing Khaleeji 'better than their best' and selected for the televised Independence Day troupe."}
-      ]
-    },
-    {
-      "id": "ch2",
-      "title": "The Televised Independence Day Performance",
-      "where": "Kuwait, late 1970s–early 1980s. A schoolgirl dances before the royals.",
-      "songs": [
-        {"n":4,"tags":[{"glyph":"🌍","text":"Kuwaiti"},{"glyph":"🎵","text":"traditional"},{"glyph":"💃","text":"Khaleeji"}],"label":"reconstructed","title":"Wein Rayeh","artist":"Abdallah Al Rowaished","vid":"eArL8-iBn9g","i":4,"desc":"Representing the traditional Khaleeji dance performed before the royals. Al Rowaished, born in Kuwait in 1961, was the defining Kuwaiti voice of this era, his career launching in 1983 — precisely contemporaneous with the Independence Day celebrations Nahr danced in as a schoolgirl."}
-      ]
-    },
-    {
-      "id": "ch3",
-      "title": "Nahr's Brief Marriage to Mhammad",
-      "where": "An oud after the beach. A dance neither of them wants to stop.",
-      "songs": [
-        {"n":5,"tags":[{"glyph":"🎵","text":"muwashshah"}],"label":"reconstructed","title":"Lamma Bada Yatathanna","artist":"Lena Chamamyan","vid":"EE8cHyjCNLE","i":5,"desc":"Mhammad takes out his oud after the beach, tunes it slowly, and plays while Nahr dances naked, a scarf around her hips, neither of them wanting to stop. Chamamyan's version of this centuries-old Andalusian muwashshah — haunting, intimate, built around the oud — describes a dancer of total abandon and the helpless enchantment of those watching her. Joy on the surface, unspoken longing underneath: the Tamara secret is already there."}
-      ]
-    },
-    {
-      "id": "ch4",
-      "title": "A Classmate's Wedding in Kuwait",
-      "where": "Early 1990s. The women's segregated celebration, a DJ's set arc from Khaleeji to dabke.",
-      "songs": [
-        {"n":6,"tags":[{"glyph":"🌍","text":"Emirati"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"Khaleeji"}],"label":"reconstructed","title":"Motheer","artist":"Ahlam","vid":"1Rqa3xWoBHQ","i":6,"desc":"Representing the pop Khaleeji portion of the DJ set. Ahlam was the breakout Khaleeji pop female voice of the early 1990s, her sound exactly matching the 'pop Khaleeji' the novel describes at this women's segregated Gulf wedding."},
-        {"n":7,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"shaabi"}],"label":"reconstructed","title":"Matkhafesh","artist":"Amr Diab","vid":"F4npeninpf4","i":7,"desc":"Representing the Egyptian pop portion of the wedding DJ set. One of Amr Diab's biggest early hits — already the dominant Egyptian voice at Arab weddings regionwide before his late-90s peak."},
-        {"n":8,"tags":[{"glyph":"🌍","text":"Lebanese"},{"glyph":"🎵","text":"tarab"}],"label":"artist","title":"Saalouny El Nas","artist":"Fairuz","vid":"Ns5P6lRhmEY","i":8,"desc":"Representing the Lebanese pop portion of the wedding. Fairuz is the defining Lebanese voice referenced throughout the novel, and this warm, deeply familiar song suits the festive wedding atmosphere well."},
-        {"n":9,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"takht"},{"glyph":"🎵","text":"taqseem"}],"label":"reconstructed","title":"Longa Farahfeza","artist":"National Arab Orchestra Takht Ensemble","vid":"ET2bgLiqjaY","i":9,"desc":"Representing the classical takht orchestra portion with instrumental taqseem. A longa is the quintessential takht showpiece — designed precisely for this kind of classical interlude at Arab celebrations, performed on oud, qanun, ney, violin, and riq."},
-        {"n":10,"tags":[{"glyph":"🌍","text":"Palestinian"},{"glyph":"🎵","text":"folk"},{"glyph":"💃","text":"dabke"}],"label":"named","title":"Al Jafra","artist":"Traditional Palestinian/Levantine dabke","vid":"9B3N0qXv0vk","i":10,"desc":"The jafra is explicitly named in the novel. Nahr leads the Levantine women in a high-stepping dabke and drags the bride into the center of the dance floor."}
-      ]
-    },
-    {
-      "id": "ch5",
-      "title": "Illicit Parties in Kuwait — the Diwaniya",
-      "where": "Early 1990s. Nahr dances for banknotes as 'Almas.'",
-      "songs": [
-        {"n":11,"tags":[{"glyph":"🌍","text":"Kuwaiti"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"Khaleeji"}],"label":"reconstructed","title":"Ana Batba'a Galbi","artist":"Abdallah Al Rowaished","vid":"eMqIHRm0R3c","i":11,"desc":"Representing the unnamed loud party music at the wealthy Kuwaiti men's diwaniya where Nahr dances for banknotes as 'Almas.' Al Rowaished was the dominant sound at elite Kuwaiti private gatherings in this period."}
-      ]
-    },
-    {
-      "id": "ch6",
-      "title": "Salon Renovation in Palestine",
-      "where": "Mid-2000s. With Jumana, paint thrown across the walls, the radio on.",
-      "songs": [
-        {"n":12,"tags":[{"glyph":"🌍","text":"Lebanese"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"dance"}],"label":"named","title":"Ah We Nos","artist":"Nancy Ajram","vid":"7ZvVP9U7wE4","i":12,"desc":"Playing on the radio as Jumana's brothers arrive to find Nahr and Jumana throwing paint at each other."},
-        {"n":13,"tags":[{"glyph":"🌍","text":"Lebanese"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"dance"}],"label":"named","title":"Bous El Wawa","artist":"Hayfa Wahbe","vid":"fDNfXjQiD9E","i":13,"desc":"Her biggest and most iconic hit, emblematic of her Lebanese pop persona in the mid-2000s."},
-        {"n":14,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"pop"}],"label":"artist","title":"Tamally Ma'ak","artist":"Amr Diab","vid":"dwTJ2AELgoc","i":14,"desc":"His most enduring song, released 2000 — a perfect fit for the mid-2000s Palestinian salon renovation scene."},
-        {"n":15,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"pop"}],"label":"artist","title":"Mabtefrahsh","artist":"Sherine","vid":"iz37gvhvhjg","i":15,"desc":"One of her most recognizable songs, widely played across the Arab world throughout the 2000s."},
-        {"n":16,"tags":[{"glyph":"🌍","text":"Lebanese"},{"glyph":"🎵","text":"pop"}],"label":"artist","title":"Tab Leih","artist":"Ragheb Alama","vid":"9Vb7gdxuo0s","i":16,"desc":"One of his signature Lebanese pop hits, extremely popular on radio throughout this period."}
-      ]
-    },
-    {
-      "id": "ch7",
-      "title": "A Party in Palestine",
-      "where": "Before the smuggling operation. The room slows, Nahr opens her eyes, Bilal is watching.",
-      "songs": [
-        {"n":17,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"pop"}],"label":"artist","title":"Nour El Ein","artist":"Amr Diab","vid":"KLJA-srM_yM","i":17,"desc":"Representing the unnamed Amr Diab song to which thirty people are dancing when Nahr enters the party. His most globally recognized hit (1996), the one most likely playing at any pan-Arab gathering in Palestine in the early 2000s."},
-        {"n":18,"tags":[{"glyph":"🌍","text":"Lebanese"},{"glyph":"🎵","text":"tarab"}],"label":"named","title":"Ya Tayr","artist":"Fairuz","vid":"dlbA6_Qni9I","i":18,"desc":"The DJ slows the evening with this song. The opening flute notes transport Nahr through a spiral of memories — Kuwait's shores, her family, Jandal, Palestine. She opens her eyes to find Bilal watching her."}
-      ]
-    },
-    {
-      "id": "ch8",
-      "title": "Under Curfew, at Home with Bilal",
-      "where": "Tanks surrounding the town. Candles. A tarab tape in a blacked-out room.",
-      "songs": [
-        {"n":19,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"tarab"}],"label":"named","title":"El Hawa Hawaya","artist":"Abdel Halim Hafez","vid":"gJWMMn747J8","i":19,"desc":"On a tarab tape Bilal plays by candlelight in a blacked-out room. As this song plays, he kneels beside Nahr and they make love while tanks surround the town."}
-      ]
-    },
-    {
-      "id": "ch9",
-      "title": "Military Court — Nahr's Act of Defiance",
-      "where": "Before an Israeli military judge, Nahr opens her mouth to sing.",
-      "songs": [
-        {"n":20,"tags":[{"glyph":"🌍","text":"Palestinian"},{"glyph":"🎵","text":"folk"},{"glyph":"💃","text":"traditional"}],"label":"named","title":"Yomma Mweil El-Hawa","artist":"May Nasr","vid":"wW9EPzVpsLo","i":20,"desc":"Nahr opens her courtroom singing protest with this traditional song 'to set the mood.' May Nasr's version is a Palestinian singer performing a Palestinian folk song — all the more fitting for Nahr's act of defiance before an Israeli military judge."},
-        {"n":21,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"tarab"}],"label":"named","title":"El Hawa Hawaya","artist":"Abdel Halim Hafez","vid":"rzRhJp1eOeQ","i":21,"desc":"The first Abdel Halim song she sings in court, immediately after the opening."},
-        {"n":22,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"tarab"}],"label":"named","title":"Qariatol Fingan","artist":"Abdel Halim Hafez","vid":"R0eLAet_dJA","i":22,"desc":"Her personal favorite — the judge baffled and irate, ordering guards to silence her."},
-        {"n":23,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"tarab"}],"label":"named","title":"Mawood","artist":"Abdel Halim Hafez","vid":"XhemmM0k-3g","i":23,"desc":"The final song she manages before the judge expels the press and has her forcibly silenced."}
-      ]
-    }
-  ]
-}
+{"chapters":[{"id":"ch1","pageStart":19,"title":"Childhood in Kuwait","titlePage":null,"whereParts":[{"text":"Nahr's family home, late 1970s — the small rituals of a girl before everything."}],"songs":[{"n":1,"page":19,"tags":[{"glyph":"🌍","text":"Syrian"},{"glyph":"🎵","text":"comedy folk"},{"glyph":"💃","text":"shaabi"}],"label":"named","title":"Fattoum Fattouma","artist":"Ghawwar el-Tousheh","vid":"7R2jPA6fkNo","i":1,"descParts":[{"text":"Nahr's father teaches her this song during their private weekend ritual at home in Kuwait, singing together while he wipes the coffee table with Windex. Forbidden to sing it in front of her mother.","page":19}]},{"n":2,"page":22,"tags":[{"glyph":"🌍","text":"Kuwaiti"},{"glyph":"🎵","text":"national anthem"}],"label":"named","title":"Al-Nasheed Al-Watani","artist":"Kuwait National Anthem","vid":"i-7mnv4VhbM","i":2,"descParts":[{"text":"Nahr and all students line up every school day to sing it, pledging loyalty to the successive Kuwaiti emirs with genuine passion."}]},{"n":3,"page":22,"tags":[{"glyph":"🌍","text":"Kuwaiti"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"Khaleeji"}],"label":"reconstructed","title":"Sikat Safar","artist":"Nabil Shuail","vid":"WaQ3sCUc7kA","i":3,"descParts":[{"text":"Representing the Khaleeji pop tradition Nahr grew up immersed in. Shuail, the 'Gulf Nightingale' born in Kuwait in 1962, rose to fame in the early 1980s — "},{"text":"the exact era Nahr is dancing Khaleeji 'better than their best' and selected for the televised Independence Day troupe.","page":23}]},{"n":4,"page":23,"tags":[{"glyph":"🌍","text":"Kuwaiti"},{"glyph":"🎵","text":"traditional"},{"glyph":"💃","text":"Khaleeji"}],"label":"reconstructed","title":"Wein Rayeh","artist":"Abdallah Al Rowaished","vid":"eArL8-iBn9g","i":4,"descParts":[{"text":"Representing the traditional Khaleeji dance performed before the royals. Al Rowaished, born in Kuwait in 1961, was the defining Kuwaiti voice of this era, his career launching in 1983 — "},{"text":"precisely contemporaneous with the Independence Day celebrations Nahr danced in as a schoolgirl.","page":23}]}]},{"id":"ch3","pageStart":34,"title":"Nahr's Marriage to Mhammad","titlePage":34,"whereParts":[{"text":"An oud after the beach. A dance neither of them wants to stop.","page":34}],"songs":[{"n":5,"page":34,"tags":[{"glyph":"🎵","text":"muwashshah"}],"label":"reconstructed","title":"Lamma Bada Yatathanna","artist":"Lena Chamamyan","vid":"EE8cHyjCNLE","i":5,"descParts":[{"text":"Mhammad takes out his oud after the beach, tunes it slowly, and plays while Nahr dances naked, a scarf around her hips, neither of them wanting to stop.","page":35},{"text":" Chamamyan's version of this centuries-old Andalusian muwashshah — haunting, intimate, built around the oud — describes a dancer of total abandon and the helpless enchantment of those watching her. "},{"text":"Joy on the surface, unspoken longing underneath: the Tamara secret is already there.","page":35}]}]},{"id":"ch4","pageStart":36,"title":"A Classmate's Wedding in Kuwait","titlePage":36,"whereParts":[{"text":"Early 1990s. The women's segregated celebration, a DJ's set arc from Khaleeji to dabke."}],"songs":[{"n":6,"page":37,"tags":[{"glyph":"🌍","text":"Emirati"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"Khaleeji"}],"label":"reconstructed","title":"Motheer","artist":"Ahlam","vid":"1Rqa3xWoBHQ","i":6,"descParts":[{"text":"Representing the pop Khaleeji portion of the DJ set. Ahlam was the breakout Khaleeji pop female voice of the early 1990s, her sound exactly matching the 'pop Khaleeji' the novel describes at this women's segregated Gulf wedding."}]},{"n":7,"page":37,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"shaabi"}],"label":"reconstructed","title":"Matkhafesh","artist":"Amr Diab","vid":"F4npeninpf4","i":7,"descParts":[{"text":"Representing the Egyptian pop portion of the wedding DJ set. One of Amr Diab's biggest early hits — already the dominant Egyptian voice at Arab weddings regionwide before his late-90s peak."}]},{"n":8,"page":37,"tags":[{"glyph":"🌍","text":"Lebanese"},{"glyph":"🎵","text":"tarab"}],"label":"artist","title":"Saalouny El Nas","artist":"Fairuz","vid":"Ns5P6lRhmEY","i":8,"descParts":[{"text":"Representing the Lebanese pop portion of the wedding. Fairuz is the defining Lebanese voice referenced throughout the novel, and this warm, deeply familiar song suits the festive wedding atmosphere well."}]},{"n":9,"page":37,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"takht"},{"glyph":"🎵","text":"taqseem"}],"label":"reconstructed","title":"Longa Farahfeza","artist":"National Arab Orchestra Takht Ensemble","vid":"ET2bgLiqjaY","i":9,"descParts":[{"text":"Representing the classical takht orchestra portion with instrumental taqseem. A longa is the quintessential takht showpiece — designed precisely for this kind of classical interlude at Arab celebrations, performed on oud, qanun, ney, violin, and riq."}]},{"n":10,"page":37,"tags":[{"glyph":"🌍","text":"Palestinian"},{"glyph":"🎵","text":"folk"},{"glyph":"💃","text":"dabke"}],"label":"named","title":"Al Jafra","artist":"Traditional Palestinian/Levantine dabke","vid":"9B3N0qXv0vk","i":10,"descParts":[{"text":"The jafra is explicitly named in the novel. Nahr leads the Levantine women in a high-stepping dabke and drags the bride into the center of the dance floor."}]}]},{"id":"ch5","pageStart":50,"title":"Illicit Parties in Kuwait — the Diwaniya","titlePage":50,"whereParts":[{"text":"Early 1990s. "},{"text":"Nahr dances for banknotes as 'Almas.'","page":50}],"songs":[{"n":11,"page":50,"tags":[{"glyph":"🌍","text":"Kuwaiti"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"Khaleeji"}],"label":"reconstructed","title":"Ana Batba'a Galbi","artist":"Abdallah Al Rowaished","vid":"eMqIHRm0R3c","i":11,"descParts":[{"text":"Representing the unnamed loud party music at the wealthy Kuwaiti men's diwaniya "},{"text":"where Nahr dances for banknotes as 'Almas.'","page":50},{"text":" Al Rowaished was the dominant sound at elite Kuwaiti private gatherings in this period."}]}]},{"id":"ch6","pageStart":230,"title":"Salon Renovation in Palestine","titlePage":230,"whereParts":[{"text":"Mid-2000s. "},{"text":"With Jumana, paint thrown across the walls, the radio on.","page":230}],"songs":[{"n":12,"page":231,"tags":[{"glyph":"🌍","text":"Lebanese"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"dance"}],"label":"named","title":"Ah We Nos","artist":"Nancy Ajram","vid":"7ZvVP9U7wE4","i":12,"descParts":[{"text":"Playing on the radio "},{"text":"as Jumana's brothers arrive to find Nahr and Jumana throwing paint at each other.","page":230}]},{"n":13,"page":230,"tags":[{"glyph":"🌍","text":"Lebanese"},{"glyph":"🎵","text":"pop"},{"glyph":"💃","text":"dance"}],"label":"artist","title":"Bous El Wawa","artist":"Hayfa Wahbe","vid":"fDNfXjQiD9E","i":13,"descParts":[{"text":"Her biggest and most iconic hit, emblematic of her Lebanese pop persona in the mid-2000s."}]},{"n":14,"page":230,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"pop"}],"label":"artist","title":"Tamally Ma'ak","artist":"Amr Diab","vid":"dwTJ2AELgoc","i":14,"descParts":[{"text":"His most enduring song, released 2000 — "},{"text":"a perfect fit for the mid-2000s Palestinian salon renovation scene","page":230},{"text":"."}]},{"n":15,"page":230,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"pop"}],"label":"artist","title":"Mabtefrahsh","artist":"Sherine","vid":"iz37gvhvhjg","i":15,"descParts":[{"text":"One of her most recognizable songs, widely played across the Arab world throughout the 2000s."}]},{"n":16,"page":230,"tags":[{"glyph":"🌍","text":"Lebanese"},{"glyph":"🎵","text":"pop"}],"label":"artist","title":"Tab Leih","artist":"Ragheb Alama","vid":"9Vb7gdxuo0s","i":16,"descParts":[{"text":"One of his signature Lebanese pop hits, extremely popular on radio throughout this period."}]}]},{"id":"ch7","pageStart":234,"title":"A Party in Palestine","titlePage":234,"whereParts":[{"text":"Before the smuggling operation. The room slows, Nahr opens her eyes, Bilal is watching.","page":234}],"songs":[{"n":17,"page":234,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"pop"}],"label":"artist","title":"Nour El Ein","artist":"Amr Diab","vid":"KLJA-srM_yM","i":17,"descParts":[{"text":"Representing the unnamed Amr Diab song to which thirty people are dancing when Nahr enters the party. His most globally recognized hit (1996), the one most likely playing at any pan-Arab gathering in Palestine in the early 2000s."}]},{"n":18,"page":234,"tags":[{"glyph":"🌍","text":"Lebanese"},{"glyph":"🎵","text":"tarab"}],"label":"named","title":"Ya Tayr","artist":"Fairuz","vid":"dlbA6_Qni9I","i":18,"descParts":[{"text":"The DJ slows the evening with this song. The opening flute notes transport Nahr through a spiral of memories — "},{"text":"Kuwait's shores, her family, Jandal, Palestine. She opens her eyes to find Bilal watching her.","page":234}]}]},{"id":"ch8","pageStart":305,"title":"Under Curfew, at Home with Bilal","titlePage":305,"whereParts":[{"text":"Tanks surrounding the town. Candles. A tarab tape in a blacked-out room.","page":305}],"songs":[{"n":19,"page":305,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"tarab"}],"label":"named","title":"El Hawa Hawaya","artist":"Abdel Halim Hafez","vid":"gJWMMn747J8","i":19,"descParts":[{"text":"On a tarab tape Bilal plays by candlelight in a blacked-out room. As this song plays, he kneels beside Nahr and they make love while tanks surround the town.","page":305}]}]},{"id":"ch9","pageStart":333,"title":"Nahr's Act of Defiance","titlePage":333,"whereParts":[{"text":"Before an Israeli military judge, Nahr opens her mouth to sing.","page":333}],"songs":[{"n":20,"page":333,"tags":[{"glyph":"🌍","text":"Palestinian"},{"glyph":"🎵","text":"folk"},{"glyph":"💃","text":"traditional"}],"label":"named","title":"Yomma Mweil El-Hawa","artist":"May Nasr","vid":"wW9EPzVpsLo","i":20,"descParts":[{"text":"Nahr opens her courtroom singing protest with this traditional song 'to set the mood.'","page":333},{"text":" May Nasr's version is a Palestinian singer performing a Palestinian folk song — "},{"text":"all the more fitting for Nahr's act of defiance before an Israeli military judge.","page":333}]},{"n":21,"page":333,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"tarab"}],"label":"named","title":"El Hawa Hawaya","artist":"Abdel Halim Hafez","vid":"rzRhJp1eOeQ","i":21,"descParts":[{"text":"The first Abdel Halim song she sings in court, immediately after the opening.","page":333}]},{"n":22,"page":333,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"tarab"}],"label":"named","title":"Qariatol Fingan","artist":"Abdel Halim Hafez","vid":"R0eLAet_dJA","i":22,"descParts":[{"text":"Her personal favorite — "},{"text":"the judge baffled and irate, ordering guards to silence her.","page":333}]},{"n":23,"page":333,"tags":[{"glyph":"🌍","text":"Egyptian"},{"glyph":"🎵","text":"tarab"}],"label":"named","title":"Mawood","artist":"Abdel Halim Hafez","vid":"XhemmM0k-3g","i":23,"descParts":[{"text":"The final song she manages before the judge expels the press and has her forcibly silenced.","page":333}]}]}]}
 </script>
 
 <!-- ────────────────────────── TWEAKS ────────────────────────── -->
@@ -846,6 +990,18 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
     reconstructed: { cls: 'is-reconstructed', glyph: '◇', text: 'Reconstructed from context' },
   };
 
+  // Render a `parts` array (each {text, page?}) into HTML with redact spans.
+  function renderParts(parts) {
+    if (!parts || !parts.length) return '';
+    return parts.map((p) => {
+      const safe = escapeHTML(p.text);
+      if (p.page) {
+        return `<span class="redact" data-redact-page="${p.page}">${safe}<span class="rd-tag" aria-hidden="true">p.${p.page}</span></span>`;
+      }
+      return safe;
+    }).join('');
+  }
+
   function buildSong(song) {
     const thumb = `https://img.youtube.com/vi/${song.vid}/hqdefault.jpg`;
     const num = String(song.n).padStart(2, '0');
@@ -858,6 +1014,7 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
           return `<span class="song-tag ${cls}"><span class="tag-glyph" aria-hidden="true">${tg.glyph}</span>${escapeHTML(tg.text)}</span>`;
         }).join('')}</div>`
       : '';
+    const descHTML = renderParts(song.descParts || (song.desc ? [{text: song.desc}] : []));
     return `
       <article class="song" id="song-${song.n}">
         <a class="song-thumb" href="${url}" target="_blank" rel="noopener" aria-label="Watch &quot;${escapeHTML(song.title)}&quot; on YouTube">
@@ -874,7 +1031,7 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
             <p class="song-artist">${escapeHTML(song.artist)}</p>
             ${tagsHTML}
           </div>
-          <p class="song-desc">${escapeHTML(song.desc)}</p>
+          <p class="song-desc">${descHTML}</p>
           <div class="song-foot">
             <a class="song-link" href="${url}" target="_blank" rel="noopener"><span class="tri">▶</span> Watch on YouTube</a>
           </div>
@@ -888,6 +1045,10 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   function buildChapter(ch, idx) {
     const songs = ch.songs.map(buildSong).join('');
     const cubeSvg = window.TumblingBlocks.singleCube({ size: 36, palette: 'book', seed: idx });
+    const titleHTML = ch.titlePage
+      ? `<span class="redact" data-redact-page="${ch.titlePage}">${escapeHTML(ch.title)}<span class="rd-tag" aria-hidden="true">p.${ch.titlePage}</span></span>`
+      : escapeHTML(ch.title);
+    const whereHTML = renderParts(ch.whereParts || (ch.where ? [{text: ch.where}] : []));
     return `
       <section class="chapter" id="${ch.id}" data-screen-label="${String(idx + 2).padStart(2, '0')} ${ch.title}">
         <div class="chapter-inner">
@@ -897,8 +1058,8 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
               <span>Scene</span>
               <span class="roman">${ROMANS[idx] || idx + 1}</span>
             </div>
-            <h2 class="chapter-title">${escapeHTML(ch.title)}</h2>
-            <p class="chapter-where">${escapeHTML(ch.where)}</p>
+            <h2 class="chapter-title">${titleHTML}</h2>
+            <p class="chapter-where">${whereHTML}</p>
           </header>
           <div class="songs">${songs}</div>
         </div>
@@ -913,13 +1074,95 @@ window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 
     const nav = document.getElementById('contents-nav');
     nav.innerHTML = data.chapters
-      .map((c, i) => `<a href="#${c.id}"><span class="num">${String(i + 1).padStart(2, '0')}</span>${escapeHTML(c.title)}</a>`)
+      .map((c, i) => {
+        const nameHTML = c.titlePage
+          ? `<span class="redact" data-redact-page="${c.titlePage}">${escapeHTML(c.title)}<span class="rd-tag" aria-hidden="true">p.${c.titlePage}</span></span>`
+          : escapeHTML(c.title);
+        return `<a href="#${c.id}"><span class="num">${String(i + 1).padStart(2, '0')}</span><span class="scene-name">${nameHTML}</span></a>`;
+      })
       .join('');
+  }
+
+  // ── Spoiler shield ────────────────────────────────────────────────────
+  const SHIELD_KEY = 'atlw-shield';
+
+  function applyShield(state) {
+    const data = JSON.parse(document.getElementById('soundtrack-data').textContent);
+    const totalScenes = data.chapters.length;
+    const redacts = document.querySelectorAll('.redact[data-redact-page]');
+
+    if (state.mode === 'show') {
+      redacts.forEach((el) => el.classList.remove('is-redacted'));
+    } else {
+      const p = state.page;
+      redacts.forEach((el) => {
+        const pg = parseInt(el.dataset.redactPage || '0', 10);
+        if (pg && pg > p) el.classList.add('is-redacted');
+        else el.classList.remove('is-redacted');
+      });
+    }
+
+    const readout = document.getElementById('shield-readout');
+    if (readout) {
+      if (state.mode === 'show') {
+        readout.textContent = `Showing everything — ${totalScenes} scenes visible`;
+      } else {
+        // Count scenes with at least one visible song (song.page <= state.page)
+        let visibleScenes = 0;
+        data.chapters.forEach((ch) => {
+          if (ch.songs.some((sg) => !sg.page || sg.page <= state.page)) visibleScenes++;
+        });
+        readout.textContent = `Page ${state.page} — ${visibleScenes} ${visibleScenes === 1 ? 'scene' : 'scenes'} visible`;
+      }
+    }
+
+    const range = document.getElementById('shield-range');
+    if (range) {
+      const pct = ((state.page - 1) / (360 - 1)) * 100;
+      range.style.setProperty('--fill', pct + '%');
+      range.disabled = state.mode === 'show';
+    }
+
+    document.querySelectorAll('.shield-toggle button').forEach((b) => {
+      b.classList.toggle('is-active', b.dataset.mode === state.mode);
+    });
+  }
+
+  function initShield() {
+    let state = { mode: 'hide', page: 1 };
+    try {
+      const saved = JSON.parse(localStorage.getItem(SHIELD_KEY) || 'null');
+      if (saved && saved.mode) state = Object.assign(state, saved);
+    } catch (e) {}
+
+    const range = document.getElementById('shield-range');
+    if (!range) return;
+    range.value = state.page;
+
+    function save() {
+      try { localStorage.setItem(SHIELD_KEY, JSON.stringify(state)); } catch (e) {}
+    }
+
+    range.addEventListener('input', (e) => {
+      state.page = parseInt(e.target.value, 10);
+      if (state.mode !== 'hide') state.mode = 'hide';
+      applyShield(state); save();
+    });
+
+    document.querySelectorAll('.shield-toggle button').forEach((b) => {
+      b.addEventListener('click', () => {
+        state.mode = b.dataset.mode;
+        applyShield(state); save();
+      });
+    });
+
+    applyShield(state);
   }
 
   function init() {
     renderPatterns({ palette: 'book' });
     renderChapters();
+    initShield();
     let t;
     window.addEventListener('resize', () => {
       clearTimeout(t);
@@ -954,7 +1197,13 @@ function SoundtrackTweaks() {
     if (hero) {
       hero.style.opacity = t.showPattern ? String((t.patternIntensity || 100) / 100) : '0';
     }
-  }, [t.palette, t.patternIntensity, t.showPattern]);
+    if (t.songRedactColor) {
+      document.documentElement.style.setProperty('--song-redact-bg', t.songRedactColor);
+    }
+    if (typeof t.songRedactSaturation === 'number') {
+      document.documentElement.style.setProperty('--song-redact-sat', t.songRedactSaturation + '%');
+    }
+  }, [t.palette, t.patternIntensity, t.showPattern, t.songRedactColor, t.songRedactSaturation]);
 
   return (
     <window.TweaksPanel title="Tweaks">
@@ -984,6 +1233,32 @@ function SoundtrackTweaks() {
           onChange={(v) => setTweak('patternIntensity', v)}
         />
       </window.TweakSection>
+      <window.TweakSection label="Redactions">
+        <window.TweakColor
+          label="Song description bar"
+          value={t.songRedactColor}
+          options={[
+            '#3a8a55',
+            '#2d7a45',
+            '#1f5d34',
+            '#1f4f2e',
+            '#194025',
+            '#143820',
+            '#0e2c19',
+            '#08220f'
+          ]}
+          onChange={(v) => setTweak('songRedactColor', v)}
+        />
+        <window.TweakSlider
+          label="Bar saturation"
+          value={t.songRedactSaturation}
+          min={0}
+          max={200}
+          step={5}
+          unit="%"
+          onChange={(v) => setTweak('songRedactSaturation', v)}
+        />
+      </window.TweakSection>
     </window.TweaksPanel>
   );
 }
@@ -994,3 +1269,4 @@ ReactDOM.createRoot(mount).render(<SoundtrackTweaks />);
 </script>
 </body>
 </html>
+ 
